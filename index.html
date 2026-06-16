@@ -227,20 +227,17 @@
         showBanner: unityShowBanner
       };
 
-      if (isMobileDevice()) {
-        unityContainer.className = "unity-mobile";
-        canvas.className = "unity-mobile";
+if (isMobileDevice()) {
+  unityContainer.className = "unity-mobile";
+  canvas.className = "unity-mobile";
 
-        /*
-          スマホのチカチカ・重さ対策。
-          画質より安定優先なら 1 が無難。
-          もっと綺麗にしたければ 1.5 や 2 を試す。
-        */
-        config.devicePixelRatio = 1;
-      } else {
-        unityContainer.className = "unity-desktop";
-        canvas.className = "unity-desktop";
-      }
+  // 画質と負荷のバランス。
+  // 1だと荒い。2だと綺麗だが重くなる。
+  config.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+} else {
+  unityContainer.className = "unity-desktop";
+  canvas.className = "unity-desktop";
+}
 
       document.querySelector("#unity-loading-bar").style.display = "block";
 
