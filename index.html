@@ -4,17 +4,14 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-    <!-- Mobile / PWA friendly settings -->
+    <!-- Mobile display settings: 画質には触らず、表示領域だけ整える -->
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="FisherMan">
+    <meta name="apple-mobile-web-app-title" content="FisherMan3D">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- manifest.webmanifest を作る場合だけ有効。まだ作らないならこの行は消してOK -->
-    <link rel="manifest" href="manifest.webmanifest">
-
-    <title>FisherMan3D</title>
+    <title>Unity Web Player | FisherMan3D</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
 
@@ -48,15 +45,9 @@
         justify-content: center !important;
       }
 
-      /*
-        横画面ゲーム用。
-        16:9で収める設定。
-        もしUnity側を960x600の16:10で作っているなら、
-        aspect-ratioを 16 / 10 に変えてください。
-      */
       #unity-canvas {
-        width: min(100vw, 177.777dvh) !important;
-        height: min(100dvh, 56.25vw) !important;
+        width: 100vw !important;
+        height: 100dvh !important;
         max-width: 100vw !important;
         max-height: 100dvh !important;
         background: #000 !important;
@@ -121,7 +112,7 @@
 
   <body>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width="960" height="540" tabindex="-1"></canvas>
+      <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
 
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
@@ -197,11 +188,6 @@
         }
       }
 
-      /*
-        スマホでは最初のユーザー操作でフルスクリーンを試す。
-        iPhone Safariでは効かないことが多いので、
-        その場合は「ホーム画面に追加」運用が一番安定。
-      */
       if (isMobileDevice()) {
         document.addEventListener(
           "pointerdown",
@@ -209,6 +195,14 @@
             requestMobileFullscreen();
           },
           { once: true }
+        );
+
+        document.addEventListener(
+          "touchmove",
+          function (event) {
+            event.preventDefault();
+          },
+          { passive: false }
         );
       }
 
@@ -227,17 +221,15 @@
         showBanner: unityShowBanner
       };
 
-if (isMobileDevice()) {
-  unityContainer.className = "unity-mobile";
-  canvas.className = "unity-mobile";
-
-  // 画質と負荷のバランス。
-  // 1だと荒い。2だと綺麗だが重くなる。
-  config.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-} else {
-  unityContainer.className = "unity-desktop";
-  canvas.className = "unity-desktop";
-}
+      if (isMobileDevice()) {
+        unityContainer.className = "unity-mobile";
+        canvas.className = "unity-mobile";
+      } else {
+        unityContainer.className = "unity-desktop";
+        canvas.className = "unity-desktop";
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      }
 
       document.querySelector("#unity-loading-bar").style.display = "block";
 
